@@ -37,48 +37,23 @@ int p1_solution(FILE *input)
 
 Schematic build_schematic(FILE *input)
 {
-    Schematic new = {0};
+    Schematic sch = {0};
     for(int line = 0; !feof(input); line++)
     {
         char line_buffer[MAX_WIDTH] = {0};
         fgets(line_buffer, MAX_WIDTH - 1, input);
-        if (new.Height == 0) {
-            new.Height = strlen(line_buffer) - 1;
-            new.Width = new.Height;
+        if (sch.Height == 0) 
+        {
+            sch.Height = sch.Width = strlen(line_buffer) - 1;
         }
 
         int position = 0;
         for (char *pC = line_buffer; *pC; pC++) 
         {
-            new.Schematic[line][position++] = *pC;
+            sch.Schema[line][position++] = *pC;
         }
     }
-    return new;
-}
-
-void print_schematic(Schematic *sch, char *mode)
-{
-    for (size_t y = 0; y < sch->Height; y++) 
-    {
-        for (size_t x = 0; x < sch->Width; x++) 
-        {
-            char current = sch->Schematic[y][x];
-            if (strcmp(mode, "r") == 0) {
-                printf("%c", current);    
-            } 
-            else if (strcmp(mode, "p") == 0) {
-                printf("%c", (current == '.') ? ' ' : current);
-            } 
-            else if (strcmp(mode, "s") == 0) {
-                if (!isalnum(current) && current != '.')
-                    printf("%c", current);
-            } 
-            else {
-                printf("ERROR: INVALID MODE\n");
-            }
-        }
-        putchar('\n');
-    }
+    return sch;
 }
 
 void calculate_schematic(Schematic *sch)
@@ -87,7 +62,7 @@ void calculate_schematic(Schematic *sch)
     {
         for (int x = 0; x < (int) sch->Width; x++) 
         {
-            char c = sch->Schematic[y][x];
+            char c = sch->Schema[y][x];
             if (is_symbol(c)) 
             {
                 sch->Sum += adjacent_numbers(sch, x, y);
@@ -98,18 +73,20 @@ void calculate_schematic(Schematic *sch)
 
 bool is_symbol(char c)
 {
-    if (isalnum(c) || c == '.' || isspace(c)) return false;
-    else return true;
+    return !(isalnum(c) || c == '.' || isspace(c));
 }
 
 int adjacent_numbers(Schematic *sch, int x, int y)
 {
     int sum = 0, previous = 0;
 
-    for (int i_y = -1; i_y < 2; i_y++) {
-        for (int i_x = -1; i_x < 2; i_x++) {
+    for (int i_y = -1; i_y < 2; i_y++) 
+    {
+        for (int i_x = -1; i_x < 2; i_x++) 
+        {
             int new = number_at(sch, x + i_x, y + i_y);
-            if (previous != new) {
+            if (previous != new) 
+            {
                 sum += new;
                 previous = new;
             }
@@ -120,29 +97,26 @@ int adjacent_numbers(Schematic *sch, int x, int y)
 
 int number_at(Schematic *sch, int x, int y)
 {
-    if (y > (int) sch->Height || y < 0 || x > (int) sch->Width || x < 0) 
+    if ( y > (int) sch->Height || y < 0 || 
+         x > (int) sch->Width  || x < 0    ) 
         return 0;
 
-    char number_buffer[4] = {0};
-    if (isdigit(sch->Schematic[y][x])) 
+    char number_buffer[NUM_LENGTH] = {0};
+    if (isdigit(sch->Schema[y][x])) 
     {
-        int o_x = x;
-        while(isdigit(sch->Schematic[y][o_x - 1]) && o_x > 0) 
-            o_x--;
+        while (isdigit(sch->Schema[y][x - 1]) && x > 0)
+            x--;
 
-        for (int i = 0; isdigit(sch->Schematic[y][o_x]) && o_x < (int) sch->Width; i++, o_x++)
-            number_buffer[i] = sch->Schematic[y][o_x];
+        for (int i = 0; isdigit(sch->Schema[y][x]) && x < (int) sch->Width;)
+            number_buffer[i++] = sch->Schema[y][x++];
     }
-
     return atoi(number_buffer);
 }
 
 int p2_solution(FILE *input) 
 {
     Schematic sch = build_schematic(input);
-
     calculate_gears(&sch);
-
     return sch.GearRatio;
 }
 
@@ -152,11 +126,9 @@ void calculate_gears(Schematic *sch)
     {
         for (int x = 0; x < (int) sch->Width; x++) 
         {
-            char c = sch->Schematic[y][x];
-            if (c == '*') 
-            {
-                sch->GearRatio += gear_numbers(sch, x, y);
-            }
+            char c = sch->Schema[y][x];
+            if (c == '*')
+                { sch->GearRatio += gear_numbers(sch, x, y); }
         }
     }
 }
@@ -164,24 +136,23 @@ void calculate_gears(Schematic *sch)
 int gear_numbers(Schematic *sch, int x, int y)
 {
     int previous = 0,
-        gears[2] = {0},
+        gears[GEAR_NUM] = {0},
         i = 0;
 
-    for (int i_y = -1; i_y < 2; i_y++) 
+    for (int i_y = -1; i_y < GEAR_NUM; i_y++) 
     {
-        for (int i_x = -1; i_x < 2; i_x++) 
+        for (int i_x = -1; i_x < GEAR_NUM; i_x++) 
         {
             int new = number_at(sch, x + i_x, y + i_y);
 
-            if (previous != new && new > 0) {
+            if (previous != new && new > 0 && i < GEAR_NUM) 
+            {
                 gears[i++] = new;
                 previous = new;
             }
         }
     }
-
-    if (gears[0] == 0 || gears[1] == 0)
-        return 0;
+    if (gears[0] == 0 || gears[1] == 0) return 0;
 
     else return gears[0] * gears[1];
 }

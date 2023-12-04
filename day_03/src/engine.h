@@ -6,18 +6,19 @@
 
 #define MAX_WIDTH 150
 #define MAX_HEIGHT 150
+#define NUM_LENGTH 3
+#define GEAR_NUM 2
 
 typedef struct Schematic {
     size_t Height;
     size_t Width;
     int Sum;
     int GearRatio;
-    char Schematic[MAX_HEIGHT][MAX_WIDTH];
+    char Schema[MAX_HEIGHT][MAX_WIDTH];
 } Schematic;
 
 int p1_solution(FILE *input);
 Schematic build_schematic(FILE *input);
-void print_schematic(Schematic *sch, char *mode);
 void calculate_schematic(Schematic *sch);
 bool is_symbol(char c);
 int adjacent_numbers(Schematic *sch, int x, int y);
