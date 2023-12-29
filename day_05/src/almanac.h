@@ -47,6 +47,7 @@ void debug_alm(Almanac *al);
 
 int64_t p2_solution(FILE *input);
 RangeAlmanac gather_more_seeds(FILE *input);
+void calculate_next_range(FILE *input, RangeAlmanac *ra);
 bool overlaps(Range a, Range b);
 bool contains(Range a, Range b);
-void split_and_append(RangeAlmanac *ra, Range seeds, Range source);
+void split_and_append(RangeAlmanac *ra, Range *seeds, Range source);

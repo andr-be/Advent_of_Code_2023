@@ -6,6 +6,7 @@
 */
 
 #include "almanac.h"
+#include <stdio.h>
 
 #define DEBUG true
 
@@ -22,8 +23,8 @@ int main(int argc, char const *argv[])
     FILE *input = fopen(filename, "r");
     if (input != NULL) 
     {
-        printf("\nSOLUTIONS:\nPart 1:\t%lld\n", p1_solution(input));
-        printf("Part 2:\t%lld\n", p2_solution(input));
+        printf("\nSOLUTIONS:\nPart 1:\t%ld\n", p1_solution(input));
+        printf("Part 2:\t%ld\n", p2_solution(input));
     } 
     else 
     {
@@ -140,7 +141,7 @@ void debug_alm(Almanac *al)
         {
             if (al->almanac[j][i] != 0)
             {
-                printf("%2lld ", al->almanac[j][i]);
+                printf("%2ld ", al->almanac[j][i]);
                 if (j < LOCATION) 
                 {
                     printf("-> ");
@@ -157,7 +158,12 @@ int64_t p2_solution(FILE *input)
 {
     RangeAlmanac ra = gather_more_seeds(input);
     int64_t solution = 0;
+    while (!feof(input)) 
+    {
+        calculate_next_range(input, &ra);
+    }
 
+    fseek(input, 0, SEEK_SET);
     return solution;
 }
 
@@ -256,5 +262,37 @@ void calculate_next_range(FILE *input, RangeAlmanac *ra)
 /// @param source the overlapping section that dictates the split
 void split_and_append(RangeAlmanac *ra, Range *seeds, Range source)
 {
+  int64_t seed_start = seeds->start,
+          seed_end = seed_start + seeds->length,
+          original_length = seeds->length,
+          map_start = source.start,
+          map_end = map_start + source.length;
 
+  Range new_range = {0};
+
+  if (seed_start < map_start)
+  {
+      seeds->length = map_start - seed_start;
+      new_range.start = map_start;
+      new_range.length = original_length - seeds->length;
+  }
+  else if (seed_start > map_start && seed_end > map_end)
+  {
+      seeds->length = seeds->length - (seed_end - map_end);
+      new_range.start = map_end;
+    new_range.length = original_length - seeds->length;
+  }
+  else if (seed_start == map_start)
+  {
+      seeds->length = source.length;
+      new_range.start = map_end;
+      new_range.length = original_length - source.length;
+  }
+
+  if (new_range.length > 0)
+  {
+      if (DEBUG) fprintf(stdout, "new range (%ld, %ld) added at index %d:%ld\n", new_range.start, new_range.start + new_range.length, ra->current_stage, ra->count);
+      ra->almanac[ra->current_stage][ra->count++] = new_range;
+  }
 }
+
