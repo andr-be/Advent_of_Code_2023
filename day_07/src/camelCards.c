@@ -42,10 +42,10 @@ uint64_t p1_solution(FILE *input)
 
     for (uint64_t i = 0; i < (uint64_t) pile.Count; i++)
     {
-        uint64_t card_score = (uint64_t) pile.Hands[i].Bid * (i + 1);
+        Hand hand = pile.Hands[i];
+        uint64_t card_score = (uint64_t) hand.Bid * (i + 1);
         solution += card_score;
-        printf("%I64i:\t%s -> %I64i\t(B: %3d, H: %d)\tTOTAL = %I64i\n", 
-            i + 1, pile.Hands[i].String, card_score, pile.Hands[i].Bid, pile.Hands[i].HandType, solution);
+        if (DEBUG) printf("%I64i:\t%s -> %I64i\t(B: %3d, H: %d)\tTOTAL = %I64i\n", i + 1, hand.String, card_score, hand.Bid, hand.HandType, solution);
     }
 
     return solution;
@@ -101,13 +101,14 @@ void assign_type(Hand *hand)
         number_in_rank[hand->Cards[i]]++;
     }
 
-    int max_duplicates = 0;
+    int max_duplicates = 0,
+        pairs = 0;
     for (int i = 0; i < RANKS; i++)
     {
         max_duplicates = (number_in_rank[i] > max_duplicates) ? number_in_rank[i] : max_duplicates;
+        if (number_in_rank[i] == 2) pairs++;
     }
 
-    int pairs = 0;
     switch (max_duplicates)
     {
     case 5: 
@@ -119,35 +120,21 @@ void assign_type(Hand *hand)
         break;
     
     case 3:
-        for (int i = 0; i < RANKS; i++)
+        switch (pairs)
         {
-            if (number_in_rank[i] == 2)
-            {
-                hand->HandType = FULL_HOUSE;
-                break;
-            }
-            if (i == RANKS - 1)
-            {
-                hand->HandType = THREE_OF_A_KIND;
-                break;
-            }
+        case 0:  hand->HandType = THREE_OF_A_KIND; break;
+        default: hand->HandType = FULL_HOUSE;      break;
         }
         break;
     
     case 2:
-        for (int i = 0; i < RANKS; i++)
-        {
-            if (number_in_rank[i] == 2)
-            {
-                pairs++;
-            }
-        }
         switch (pairs)
         {
         case 2: hand->HandType = TWO_PAIR; break;
         case 1: hand->HandType = ONE_PAIR; break;
         }
         break;
+
     default:
         hand->HandType = HIGH_CARD;
         break;
