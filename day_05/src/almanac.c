@@ -246,7 +246,7 @@ void calculate_next_range(FILE *input, RangeAlmanac *ra)
             {
                 // split the range into matching vs. non matching ranges
                 // append the new ranges to the end of the current set
-                split_and_append(ra, &ra->almanac[ra->current_stage][i], source_r);
+                split_and_append(ra, &ra->almanac[ra->current_stage - 1][i], source_r);
             }
             else 
             {
@@ -262,37 +262,37 @@ void calculate_next_range(FILE *input, RangeAlmanac *ra)
 /// @param source the overlapping section that dictates the split
 void split_and_append(RangeAlmanac *ra, Range *seeds, Range source)
 {
-  int64_t seed_start = seeds->start,
-          seed_end = seed_start + seeds->length,
-          original_length = seeds->length,
-          map_start = source.start,
-          map_end = map_start + source.length;
+    int64_t seed_start = seeds->start,
+            seed_end = seed_start + seeds->length,
+            original_length = seeds->length,
+            map_start = source.start,
+            map_end = map_start + source.length;
 
-  Range new_range = {0};
+    Range new_range = {0};
 
-  if (seed_start < map_start)
-  {
-      seeds->length = map_start - seed_start;
-      new_range.start = map_start;
-      new_range.length = original_length - seeds->length;
-  }
-  else if (seed_start > map_start && seed_end > map_end)
-  {
-      seeds->length = seeds->length - (seed_end - map_end);
-      new_range.start = map_end;
-    new_range.length = original_length - seeds->length;
-  }
-  else if (seed_start == map_start)
-  {
-      seeds->length = source.length;
-      new_range.start = map_end;
-      new_range.length = original_length - source.length;
-  }
+    if (seed_start < map_start)
+    {
+        seeds->length = map_start - seed_start;
+        new_range.start = map_start;
+        new_range.length = original_length - seeds->length;
+    }
+    else if (seed_start > map_start && seed_end > map_end)
+    {
+        seeds->length = seeds->length - (seed_end - map_end);
+        new_range.start = map_end;
+        new_range.length = original_length - seeds->length;
+    }
+    else if (seed_start == map_start)
+    {
+        seeds->length = source.length;
+        new_range.start = map_end;
+        new_range.length = original_length - source.length;
+    }
 
-  if (new_range.length > 0)
-  {
-      if (DEBUG) fprintf(stdout, "new range (%ld, %ld) added at index %d:%ld\n", new_range.start, new_range.start + new_range.length, ra->current_stage, ra->count);
-      ra->almanac[ra->current_stage][ra->count++] = new_range;
-  }
+    if (new_range.length > 0)
+    {
+        if (DEBUG) fprintf(stdout, "new range (%ld, %ld) added at index %d:%ld\n", new_range.start, new_range.start + new_range.length, ra->current_stage, ra->count);
+        ra->almanac[ra->current_stage][ra->count++] = new_range;
+    }
 }
 
