@@ -12,9 +12,10 @@
 int main(int argc, char const *argv[])
 {
     char *filename;
-    if ((argc > 1 && strcmp(argv[1], "-test") == 0) || DEBUG) {
-        filename = "../test_input.txt";
+    if ((argc > 1 && strcmp(argv[1], "-test") == 0) || DEBUG)
+    {
         printf("RUNNING IN TEST MODE\n");
+        filename = "../test_input.txt";
     }
     else filename = "../input.txt";
 
