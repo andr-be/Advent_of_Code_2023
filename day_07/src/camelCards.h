@@ -37,6 +37,7 @@ typedef struct Hand
     HAND_TYPE HandType;
     CARD Cards[HAND_SIZE];
     char String[HAND_SIZE + 1];
+    HAND_TYPE JokerHand;
 
 } Hand;
 
@@ -53,6 +54,8 @@ CARD get_card(char symbol);
 void assign_type(Hand *hand);
 void sort_hands(Collection *pile);
 int compare_hands(const void *a, const void *b);
-void swap_hands(Hand *a, Hand *b);
 
-int p2_solution(FILE *input);
+uint64_t p2_solution(FILE *input);
+void assign_joker_type(Hand *hand);
+int compare_joker_hands(const void *a, const void *b);
+void sort_hands_p2(Collection *pile);
