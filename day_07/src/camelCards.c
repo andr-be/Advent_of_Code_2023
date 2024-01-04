@@ -3,11 +3,16 @@
 /*
     Part 1: 250951660
     Part 2: ?????????
+
+    Remaining Issues To Look At:
+    1_  Check that hand assignment for Full House works right
+    2_  Check that each hand is actually the type it is
+    3_  Check declining sanity
 */
 
 #include "camelCards.h"
 
-#define DEBUG true
+#define DEBUG false
 
 int main(int argc, char const *argv[])
 {
@@ -297,21 +302,25 @@ int compare_joker_hands(const void *a, const void *b)
     {
         for (int i = 0; i < HAND_SIZE; i++)
         {
-            if (aH.Cards[i] != JACK && bH.Cards[i] == JACK)
+            if ((aH.Cards[i] > bH.Cards[i]) && (aH.Cards[i] != JACK))
             {
                 return 1;
+            }
+            if ((aH.Cards[i] < bH.Cards[i]) && (bH.Cards[i] != JACK))
+            {
+                return -1;
             }
             if (aH.Cards[i] == JACK && bH.Cards[i] != JACK)
             {
                 return -1;
             }
-            if (aH.Cards[i] > bH.Cards[i])
+            if (bH.Cards[i] == JACK && aH.Cards[i] != JACK)
             {
                 return 1;
             }
-            if (aH.Cards[i] < bH.Cards[i])
+            if (aH.Cards[i] == bH.Cards[i])
             {
-                return -1;
+                continue;
             }
         }
     }
