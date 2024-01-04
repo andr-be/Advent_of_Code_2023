@@ -7,10 +7,13 @@
 
 #include "template.h"
 
+#define DEBUG true
+
 int main(int argc, char const *argv[])
 {
     char *filename;
-    if (argc > 1 && strcmp(argv[1], "-test") == 0) {
+    if (DEBUG) 
+    {
         filename = "../test_input.txt";
         printf("RUNNING IN TEST MODE\n");
     }
@@ -18,7 +21,8 @@ int main(int argc, char const *argv[])
 
     FILE *input = fopen(filename, "r");
 
-    printf("\nSOLUTIONS:\nPart 1:\t%d\n", p1_solution(input));
+    printf("SOLUTIONS:\n");
+    printf("Part 1:\t%d\n", p1_solution(input));
     printf("Part 2:\t%d\n", p2_solution(input));
 
     return 0;
