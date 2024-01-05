@@ -5,7 +5,7 @@
     Part 2:
 */
 
-#include "template.h"
+#include "wasteland.h"
 
 #define DEBUG true
 
