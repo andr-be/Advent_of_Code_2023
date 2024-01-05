@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/Ben/Documents/GitHub/Advent_of_Code_2023/day_05/src",
-      "program": "c:/Users/Ben/Documents/GitHub/Advent_of_Code_2023/day_05/src/build/Debug/outDebug",
+      "cwd": "c:/Users/Ben/Documents/GitHub/Advent_of_Code_2023/day_08/src",
+      "program": "c:/Users/Ben/Documents/GitHub/Advent_of_Code_2023/day_08/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
